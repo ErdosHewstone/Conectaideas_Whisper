@@ -74,5 +74,8 @@ def data_transcriptor(df, model, audio_path):
         Final = row['Final']
         Tiempo = Final - Inicio
         Data = Trans_Alpha(tiempo = Tiempo, Inicio=Inicio, Final=Final  , audio_path = audio_path, audio_id = audio_id, model =model)
+        if 'Hablante' in df.columns:
+            Data['Hablante'] = row['Hablante']
         Transcripcion = pd.concat([Transcripcion, Data])
+    Transcripcion = Transcripcion.sort_values(by=['Inicio']).reset_index(drop=True)
     return Transcripcion
