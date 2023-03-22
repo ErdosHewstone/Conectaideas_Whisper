@@ -2,11 +2,17 @@
 Este proyecto consiste en un programa que permite transcribir audios y dar un output en un formato de dataframe determinado.
 
 ## Instalación
-Para utilizar este programa, se deben instalar los paquetes necesarios desde el archivo requirements.txt. Para instalar los paquetes, ejecuta el siguiente comando en la terminal:
-```python
-pip install -r requirements.txt
-````
-Además se debe instalar __Whisper__ 
+Para utilizar este programa, se utilizaron las siguientes librerías y sus versiones:
+
+* Python 3.9.13
+* ffmpeg 2022-06-16-git-5242ede48d-full_build
+* Pandas 1.4.4
+* stable-whisper 2.0.1
+* openai-whisper 20230314
+
+Estas versiones son solo referencias, es probable que funcione simplemente con las últimas versiones de cada librería.
+
+Para instalar __Whisper__ 
 
 ```python
 pip install -U openai-whisper
@@ -57,3 +63,7 @@ create_wav("\video_path.mp4","\audio_path.wav")
   ```python
   dataframe.to_csv(idx.csv)
   ````
+#### Tests
+En la carpeta audio_de_prueba está el archivo de audio que con modelo ="base" entregó el siguiente dataframe
+  <div style="text-align:center"><img src="./Data_Test.png" alt="Imagen de ejemplo" style="max-width:800px; height:400px;"></div>
+En la misma carpeta se encuentran archivos csv de algunos audios transcritos para ejemplificar el resultado.
