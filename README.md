@@ -6,8 +6,18 @@ Para utilizar este programa, se deben instalar los paquetes necesarios desde el 
 ```python
 pip install -r requirements.txt
 ````
-Además se debe instalar __Stable Whisper__ 
+Además se debe instalar __Whisper__ 
 
+```python
+pip install -U openai-whisper
+```
+para la última versión
+```python
+pip install --upgrade --no-deps --force-reinstall git+https://github.com/openai/whisper.git
+```
+Más información en [La página de Whisper-OpenAI](https://github.com/openai/whisper#setup)
+
+y para instalar __Stable Whisper__ 
 ```python
 pip install -U stable-ts
 ```
@@ -17,7 +27,7 @@ pip install -U git+https://github.com/jianfch/stable-ts.git
 ```
 Más información en [La página de Stable Whisper](https://github.com/jianfch/stable-ts#setup)
 ## Uso
-Para utilizar el programa solo para transcribir, sigue los siguientes pasos:
+Sigue los siguientes pasos:
 
 1. Importa los módulos necesarios de la carpeta Transcriptor del archivo Transcriptor.py:
   ```python
