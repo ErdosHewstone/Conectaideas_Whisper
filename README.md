@@ -6,56 +6,44 @@ Para utilizar este programa, se deben instalar los paquetes necesarios desde el 
 ```python
 pip install -r requirements.txt
 ````
+Además se debe instalar __Stable Whisper__ 
+
+```python
+pip install -U stable-ts
+```
+para la última versión
+```python
+pip install -U git+https://github.com/jianfch/stable-ts.git
+```
+Más información en [La página de Stable Whisper](https://github.com/jianfch/stable-ts#setup)
 ## Uso
-### Solo para transcribir
 Para utilizar el programa solo para transcribir, sigue los siguientes pasos:
 
 1. Importa los módulos necesarios de la carpeta Transcriptor del archivo Transcriptor.py:
   ```python
-  from Transcriptor import run_model, Trans_Alpha
+  from Transcriptor import *
   ````
-2. Define la variable __'modelo'__ según alguno de los modelos de Whisper
+2. A partir del archivo mp4 puedes crear el archivo wav con la función 
+  ```python
+create_wav("\video_path.mp4","\audio_path.wav")
+  ```
+2. Define la variable __'modelo'__ según alguno de los modelos de Whisper y carga el modelo con la función __run_model__
   <div style="text-align:center"><img src="./whisper-models.png" alt="Imagen de ejemplo" style="max-width:500px; height:200px;"></div>
 
   ```python
   modelo = "base"
+  model = run_model(modelo)
   ````
-3. Ejecuta la función __Trans_Alpha__ con los parámetros definidos anteriormente:
+3. Ejecuta la función __transcribir__ con los parámetros definidos anteriormente:
 
   ```python
-  DataFrame = Trans_Alpha(tiempo, Inicio, Final, audio_path, audio_id, model)
+  result_json, idx = transcribir(audio_path, model)
   ````
-
-### Diarización y transcripción
-
-Para utilizar el programa para diarización y transcripción, sigue los siguientes pasos:
-
-1. Importa los módulos necesarios de las carpetas __Transcriptor__ y __Diarization__:
+4. Finalmente con la función __json_to_dataframe__ crea el dataframe que resume la información del json:
   ```python
-from Transcriptor import run_model, data_transcriptor
-from Diarization import speakers
-
+  dataframe = json_to_dataframe(result_json, idx) 
   ````
-  
-2. Define el siguiente parámetro:
-    * __audio_path__: La ruta del archivo de audio que deseas transcribir.
-3. Ejecuta la función __speakers__ con el parámetro __audio_path__ para obtener un DataFrame que contiene las diarizaciones:
+5. Guarda el dataframe
   ```python
-df = speakers(audio_path)
-
-  ````
-4. Define la variable __'modelo'__ según alguno de los modelos de Whisper
-  <div style="text-align:center"><img src="./whisper-models.png" alt="Imagen de ejemplo" style="max-width:500px; height:200px;"></div>
-
-  ```python
-  modelo = "base"
-  ````
-  
-5. Ejecuta la función __data_transcriptor__ con los siguientes parámetros:
-  * __df__: El DataFrame que contiene las diarizaciones.
-  * __model__: El modelo de lenguaje utilizado para la transcripción.
-  * __audio_path__: La ruta del archivo de audio que deseas transcribir.
- 
-  ```python
-  DataFrame = data_transcriptor(df, model, audio_path)
+  dataframe.to_csv(idx.csv)
   ````
