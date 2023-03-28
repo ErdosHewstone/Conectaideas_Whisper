@@ -1,6 +1,4 @@
 import subprocess
-import librosa
-import soundfile as sf
 import stable_whisper
 import json
 import pandas as pd
@@ -12,12 +10,12 @@ def create_wav(video_path,audio_path):
 # Transcripción de audio
 def transcribir(audio_path, model):
     result = model.transcribe(audio_path, language="es", suppress_silence=True, ts_num=16)
-    result.save_as_json('temp.json')
-    with open('temp.json') as archivo:
-        datos = json.load(archivo)
-    return datos
+    return result.to_dict(), audio_path.replace('.wav','')
+#     return datos, audio_path.replace('.wav','')
 
 def json_to_dataframe(result):
+    idx = result[1]
+    result = result[0]
     segments = result['segments']
     data = []
     for segment in segments:
@@ -37,6 +35,7 @@ def json_to_dataframe(result):
             'words_len': len(words_list)
         })
     df = pd.DataFrame(data)
+    df['id'] = idx
     return df
 
 def run_model(modelo):
@@ -56,5 +55,3 @@ def main():
 # Si este archivo se ejecuta como el archivo principal, llame a la función de envoltura principal
 if __name__ == "__main__":
     main()
-
-
