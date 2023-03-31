@@ -4,6 +4,7 @@ import json
 import pandas as pd
 from pydub import AudioSegment
 import math
+from tqdm import tqdm
 
 def segmentos_de_tiempo(audio_path):
     # Carga el archivo de audio
@@ -48,15 +49,23 @@ def create_wav(video_path,audio_path):
     subprocess.call(command, shell=True) 
 
 # Transcripción de audio
-def transcribir(audio_path, model):
-    tiempos = segmentos_de_tiempo(audio_path)
+def transcribir(audio_path, model, tiempos = []):
+    if len(tiempos)>0:
+        temps = []
+        for t in tiempos:
+            t1 = t[0]*1000
+            t2 = t[1]*1000
+            temps.append([t1,t2])
+        tiempos = temps
+    else:
+        tiempos = segmentos_de_tiempo(audio_path)
     newAudio = AudioSegment.from_wav(audio_path)
     results = []
     for t1,t2 in tqdm(tiempos):
         a = newAudio[t1:t2]
         a.export("temp.wav", format="wav") 
-    result = model.transcribe("temp.wav", language="es", suppress_silence=True, ts_num=16)
-    results.append(result.to_dict())
+        result = model.transcribe("temp.wav", language="es", suppress_silence=True, ts_num=16)
+        results.append(result.to_dict())
     return results, audio_path.replace('.wav','')
 #     return datos, audio_path.replace('.wav','')
 
@@ -66,6 +75,7 @@ def json_to_dataframe(result):
     df = pd.DataFrame()
     for result in results:
         segments = result['segments']
+        print(result)
         data = []
         for segment in segments:
             words = segment['words']
@@ -83,9 +93,10 @@ def json_to_dataframe(result):
                 'words_end': end_list,
                 'words_len': len(words_list)
             })
+        data = pd.DataFrame(data)
         df = pd.concat([df, data])
-        df['id'] = idx
-        df.index = range(len(df))
+    df['id'] = idx
+    df.index = range(len(df))
     return df
 
 def run_model(modelo):
