@@ -77,6 +77,7 @@ def json_to_dataframe(result):
         segments = result['segments']
         print(result)
         data = []
+        last_end = 0
         for segment in segments:
             words = segment['words']
             words_list = [word['word'] for word in words]
@@ -84,8 +85,8 @@ def json_to_dataframe(result):
             end_list = [word['end'] for word in words]
             data.append({
                 'text': segment['text'],
-                'start': segment['start'],
-                'end': segment['end'],
+                'start': last_end + segment['start'],
+                'end': last_end + segment['end'],
                 'avg_logprob' : segment['avg_logprob'],
                 'no_speech_prob': segment['no_speech_prob'],
                 'words': words_list,
@@ -94,6 +95,7 @@ def json_to_dataframe(result):
                 'words_len': len(words_list)
             })
         data = pd.DataFrame(data)
+        last_end = data.iloc[-1]['end']
         df = pd.concat([df, data])
     df['id'] = idx
     df.index = range(len(df))
