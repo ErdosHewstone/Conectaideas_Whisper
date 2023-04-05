@@ -73,11 +73,11 @@ def json_to_dataframe(result):
     idx = result[1]
     results = result[0]
     df = pd.DataFrame()
+    last_end = 0
     for result in results:
         segments = result['segments']
         print(result)
         data = []
-        last_end = 0
         for segment in segments:
             words = segment['words']
             words_list = [word['word'] for word in words]
@@ -99,6 +99,10 @@ def json_to_dataframe(result):
         df = pd.concat([df, data])
     df['id'] = idx
     df.index = range(len(df))
+    df['inicio'] = pd.to_datetime(df['start'], unit='s').dt.strftime('%H:%M:%S')
+    df['final'] = pd.to_datetime(df['end'], unit='s').dt.strftime('%H:%M:%S')
+    columnas = ['text','inicio','final','start','end','avg_logprob','no_speech_prob','words','words_start','words_end','words_len']
+    df = df[columnas]
     return df
 
 def run_model(modelo):
