@@ -109,20 +109,26 @@ modelCND2.eval()
 modelCND4 = ClassificationModel_4()
 modelCND4.load_state_dict(torch.load('models/modelo_CND4.pth'))
 modelCND4.eval()
-def classify_audio_segments(df,model): #Entrega el dataframe de audiofeatures pero con la clasificacion
+def classify_audio_segments(df, model): #Entrega el dataframe de audiofeatures pero con la clasificacion
     scaler = MinMaxScaler()
-    df =  df.copy()
-    # Crear una lista para almacenar las clasificaciones
-    classifications = []
-    X = df
-    X_scaled = scaler.fit_transform(X)
-    X_tensor = torch.tensor(X_scaled, dtype=torch.float32)
-    # Realizar la clasificación
-    with torch.no_grad():
-        y_pred = model(X_tensor)
-        classification = y_pred.argmax(dim=1).numpy()
-    # Agregar la columna de clasificaciones al DataFrame
-    df['clasificacion'] = classification
+    df = df.copy()
+    # Dividir el dataframe en chunks de tamaño maximo 300
+    chunks = np.array_split(df, np.ceil(len(df) / 300))
+    datas2 = []
+    for chunk in chunks:
+        # Crear una lista para almacenar las clasificaciones
+        X = chunk
+        X_scaled = scaler.fit_transform(X)
+        X_tensor = torch.tensor(X_scaled, dtype=torch.float32)
+        # Realizar la clasificación
+        with torch.no_grad():
+            y_pred = model(X_tensor)
+            classification = y_pred.argmax(dim=1).numpy()
+        # Agregar la columna de clasificaciones al DataFrame
+        chunk['clasificacion'] = classification
+        datas2.append(chunk)
+
+    df = pd.concat(datas2)
     return df
 
 def transcripcion_vacia(t1, t2): #FUNCION PARA GENERAR TRANSCRIPCIONES VACIAS DONDE SE SALTA LAS TRANSCRIPCIONES
@@ -159,7 +165,9 @@ def clasifica_tuplas(tuplas, T1, T2):
                 if duracion_superposicion / duracion_intervalo > 0.5:
                     output.append((t1, t2, clasificacion))
                     break
-    return output
+        else:
+            output.append((t1, t2, tuplas[-1][2]))
+
 
 def get_time_intervals(df_classified): #RECIBE LAS CLASIFICACIONES Y JUNTA LOS INTERVALOS DE IGUAL CLASIFICACION
     df_classified = df_classified.copy()
