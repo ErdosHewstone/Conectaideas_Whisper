@@ -53,11 +53,11 @@ create_wav("\video_path.mp4","\audio_path.wav")
 3. Ejecuta la función __transcribir__ con los parámetros definidos anteriormente:
 
   ```python
-  result_json, idx = transcribir(audio_path, model)
+  results = transcribir(audio_path, model)
   ````
 4. Finalmente con la función __json_to_dataframe__ crea el dataframe que resume la información del json:
   ```python
-  dataframe = json_to_dataframe([result_json, idx]) 
+  dataframe = json_to_dataframe(results) 
   ````
 5. Guarda el dataframe
   ```python
