@@ -63,7 +63,8 @@ create_wav("\video_path.mp4","\audio_path.wav")
   ```python
   dataframe.to_csv(idx.csv)
   ````
+
 #### Tests
 En la carpeta audio_de_prueba está el archivo de audio que con modelo ="base" entregó el siguiente dataframe
-  <div style="text-align:center"><img src="./Data_Test.png" alt="Imagen de ejemplo" style="max-width:800px; height:400px;"></div>
+  <div style="text-align:center"><img src="./Whisper_result.png" alt="Imagen de ejemplo" style="max-width:800px; height:400px;"></div>
 En la misma carpeta se encuentran archivos csv de algunos audios transcritos para ejemplificar el resultado.
