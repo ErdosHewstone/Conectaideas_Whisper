@@ -51,9 +51,14 @@ create_wav("\video_path.mp4","\audio_path.wav")
   model = run_model(modelo)
   ````
 3. Ejecuta la función __transcribir__ con los parámetros definidos anteriormente:
+  a. Ejecutar para cada audio de prueba para las combinaciones (supress_s = True, previous =True), (supress_s = False, previous =True)
+,(supress_s = True, previous =False), (supress_s = False, previous =False)
+
 
   ```python
-  results = transcribir(audio_path, model)
+ # a. Ejecutar para cada audio de prueba para las combinaciones:
+ (supress_s = True, previous =True), (supress_s = False, previous =True)
+,(supress_s = True, previous =False), (supress_s = False, previous =False)
   ````
 4. Finalmente con la función __json_to_dataframe__ crea el dataframe que resume la información del json:
   ```python
