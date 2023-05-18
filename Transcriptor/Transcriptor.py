@@ -153,21 +153,34 @@ def transcripcion_vacia(t1, t2): #FUNCION PARA GENERAR TRANSCRIPCIONES VACIAS DO
     return result
 
 def clasifica_tuplas(tuplas, T1, T2):
-    output = []
-    for t1, t2 in zip(T1, T2):
-        for inicio, fin, clasificacion in tuplas:
-            if inicio <= t1 and t2 <= fin:
-                output.append((t1, t2, clasificacion))
-                break
-            elif max(inicio, t1) < min(fin, t2):
-                duracion_intervalo = t2 - t1
-                duracion_superposicion = min(fin, t2) - max(inicio, t1)
-                if duracion_superposicion / duracion_intervalo > 0.5:
-                    output.append((t1, t2, clasificacion))
-                    break
-        else:
-            output.append((t1, t2, tuplas[-1][2]))
+    result = [] # Contendrá los resultados
 
+    for i in range(len(T1)): # Iterar sobre T1 y T2
+        t1 = T1[i]
+        t2 = T2[i]
+
+        total_tiempo = 0
+        suma_clasificaciones = 0
+        
+        for tupla in tuplas:
+            # Si hay alguna superposición entre las dos tuplas
+            if max(t1, tupla[0]) < min(t2, tupla[1]):
+                # Calcular la intersección
+                start = max(t1, tupla[0])
+                end = min(t2, tupla[1])
+                
+                # Calcular tiempo en la intersección y añadir a total_tiempo
+                tiempo_interseccion = end - start
+                total_tiempo += tiempo_interseccion
+                
+                # Sumar la clasificación ponderada por tiempo
+                suma_clasificaciones += tupla[2] * tiempo_interseccion
+        
+        if total_tiempo > 0: # Prevenir la división por cero
+            clasificacion = int(suma_clasificaciones / total_tiempo) # Calcular el promedio de las clasificaciones
+            result.append((t1, t2, clasificacion)) # Agregar a los resultados
+            
+    return result
 
 def get_time_intervals(df_classified): #RECIBE LAS CLASIFICACIONES Y JUNTA LOS INTERVALOS DE IGUAL CLASIFICACION
     df_classified = df_classified.copy()
@@ -261,7 +274,7 @@ def create_wav(video_path,audio_path):
     subprocess.call(command, shell=True) 
 
 # Transcripción de audio
-def transcribir(audio_path, model): #RECIBE UN AUDIO Y EL MODELO WHISPER PARA TRANSCRIPCION
+def transcribir(audio_path, model , supress_s = True, previous = False, tuples = (0.0,0.2,0.4,0.6,0.8,1.0)): #RECIBE UN AUDIO Y EL MODELO WHISPER PARA TRANSCRIPCION
     audio_features = process_audio(audio_path)
     print('audio procesado')
     clasificacion_2 = classify_audio_segments(audio_features,modelCND2) #clasificacion que corta
@@ -287,7 +300,7 @@ def transcribir(audio_path, model): #RECIBE UN AUDIO Y EL MODELO WHISPER PARA TR
         if clasificacion ==0:
             a = newAudio[t1:t2]
             a.export("temp.wav", format="wav") 
-            result = model.transcribe("temp.wav", language="es", suppress_silence=True, ts_num=16)
+            result = model.transcribe("temp.wav", language="es", suppress_silence=supress_s, ts_num=16,condition_on_previous_text=previous, temperature = tuples)
             results.append(result.to_dict())
         else:
             result = transcripcion_vacia(t1/1000,t2/1000)
