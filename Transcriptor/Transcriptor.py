@@ -351,7 +351,32 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
                'start','end','avg_logprob','no_speech_prob','words','words_start','words_end','words_len']
     df = df[columnas]
     return df
+def dataframe_to_xlsx(df, name):
+    # Agregar una nueva columna al principio del DataFrame
+    df = df.copy()
+    df.insert(0, 'evaluacion', '')
+    
+    # Guardar DataFrame en un archivo Excel
+    df.to_excel(f"{name}.xlsx", index=False)
+    
+    # Cargar el libro de trabajo
+    wb = load_workbook(f"{name}.xlsx")
 
+    # Seleccionar la hoja de cálculo
+    ws = wb.active
+
+    # Crear la validación de datos
+    dv = DataValidation(type="list", formula1='"bueno,regular,malo"', showDropDown=True)
+
+    # Agregar la validación de datos a la columna deseada (por ejemplo, la columna A que es ahora 'evaluacion')
+    ws.add_data_validation(dv)
+    for i in range(2, ws.max_row + 1):  # Comenzando desde la segunda fila porque la primera fila contiene encabezados
+        dv.add(ws[f'A{i}'])
+
+    # Guardar el libro de trabajo
+    wb.save(f"{name}.xlsx")
+
+    
 def run_model(modelo):
     return stable_whisper.load_model(modelo)
 
