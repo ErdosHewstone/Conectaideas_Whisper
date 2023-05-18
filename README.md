@@ -68,7 +68,10 @@ transcribir(audio_path, model , supress_s = True, previous = False)
   ```python
   dataframe.to_csv(f"{results[1]}_S{supress_s}_P{previous}.csv")
   ````
-
+6. Dataframe a excel de evaluacion
+````python
+dataframe_to_xlsx(df=dataframe, name =f"{results[1]}_S{supress_s}_P{previous}")
+````
 #### Tests
 En la carpeta audio_de_prueba está el archivo de audio que con modelo ="base" entregó el siguiente dataframe
   <div style="text-align:center"><img src="./Whisper_result.png" alt="Imagen de ejemplo" style="max-width:1500px; height:650px;"></div>
