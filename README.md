@@ -57,8 +57,8 @@ create_wav("\video_path.mp4","\audio_path.wav")
 
   ```python
  # a. Ejecutar para cada audio de prueba para las combinaciones:
- (supress_s = True, previous =True), (supress_s = False, previous =True)
-,(supress_s = True, previous =False), (supress_s = False, previous =False)
+#(supress_s = True, previous =True), (supress_s = False, previous =True), (supress_s = True, previous =False), (supress_s = False, previous =False)
+transcribir(audio_path, model , supress_s = True, previous = False)
   ````
 4. Finalmente con la función __json_to_dataframe__ crea el dataframe que resume la información del json:
   ```python
@@ -66,7 +66,7 @@ create_wav("\video_path.mp4","\audio_path.wav")
   ````
 5. Guarda el dataframe
   ```python
-  dataframe.to_csv(idx.csv)
+  dataframe.to_csv(f"{results[1]}_S{supress_s}_P{previous}.csv")
   ````
 
 #### Tests
