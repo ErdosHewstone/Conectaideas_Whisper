@@ -179,7 +179,9 @@ def clasifica_tuplas(tuplas, T1, T2):
         if total_tiempo > 0: # Prevenir la división por cero
             clasificacion = int(suma_clasificaciones / total_tiempo) # Calcular el promedio de las clasificaciones
             result.append((t1, t2, clasificacion)) # Agregar a los resultados
-            
+        else:
+            clasificacion = 3 # Calcular el promedio de las clasificaciones
+            result.append((t1, t2, clasificacion)) # Agregar a los resultados
     return result
 
 def get_time_intervals(df_classified): #RECIBE LAS CLASIFICACIONES Y JUNTA LOS INTERVALOS DE IGUAL CLASIFICACION
