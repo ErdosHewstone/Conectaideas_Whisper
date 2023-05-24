@@ -310,7 +310,7 @@ def transcribir(audio_path, model , supress_s = True, previous = False, tuples =
             result = transcripcion_vacia(t1/1000,t2/1000)
             results.append(result)
     intervalos = [(t1/1000,t2/1000,clasificacion) for t1,t2,clasificacion in intervalos]
-    return results, audio_path.replace('.wav',''), temps[2], intervalos
+    return results, audio_path.replace('.wav',''), temps[0:2], intervalos
 #     return datos, audio_path.replace('.wav','')
 
 def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLASE, CLASIFICACION 4 Y ENTREGA EL DATAFRAM FINAL
@@ -319,16 +319,16 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
     clasificaciones = [(t1,t2,cl) for t1,t2, cl in resultado[3]]
     df = pd.DataFrame()
     last_end = 0
-    i= 0
+    k= 0
     for result in results:
         segments = result['segments']
         if segments == []:
             segments = [{'text': '',
    'start': 0,
-   'end': 10.0,
+   'end': clasificaciones[i][1]-clasificaciones[i][0],
    'avg_logprob': 0.0,
    'no_speech_prob': 1.0,
-   'words': [{'word': '', 'start': 0, 'end': 10.0}]}]
+   'words': [{'word': '', 'start': 0, 'end': clasificaciones[i][1]-clasificaciones[i][0]}]}]
         data = []
         for segment in segments:
             words = segment['words']
@@ -347,9 +347,7 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
                 'words_len': len(words_list)
             })
         data = pd.DataFrame(data)
-        display(data)
-        print(i)
-        i+=1
+        k+=1
         last_end = data.iloc[-1]['end']
         df = pd.concat([df, data])
     df['id'] = idx
