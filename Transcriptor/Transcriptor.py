@@ -11,6 +11,8 @@ from sklearn.preprocessing import MinMaxScaler
 import pickle
 import numpy as np
 import librosa
+from openpyxl import load_workbook
+from openpyxl.worksheet.datavalidation import DataValidation
 
 def process_audio(wav_path): #ENTREGA EL DATAFRAME DE LOS AUDIOFEATURES PARA CLASIFICAR
     audio = AudioSegment.from_wav(wav_path)
@@ -302,7 +304,7 @@ def transcribir(audio_path, model , supress_s = True, previous = False, tuples =
         if clasificacion ==0:
             a = newAudio[t1:t2]
             a.export("temp.wav", format="wav") 
-            result = model.transcribe("temp.wav", language="es", suppress_silence=supress_s, ts_num=16,condition_on_previous_text=previous, temperature = tuples)
+            result = model.transcribe("temp.wav", language="es", suppress_silence=supress_s, ts_num=16,condition_on_previous_text=previous)
             results.append(result.to_dict())
         else:
             result = transcripcion_vacia(t1/1000,t2/1000)
@@ -317,8 +319,16 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
     clasificaciones = [(t1,t2,cl) for t1,t2, cl in resultado[3]]
     df = pd.DataFrame()
     last_end = 0
+    i= 0
     for result in results:
         segments = result['segments']
+        if segments == []:
+            segments = [{'text': '',
+   'start': 0,
+   'end': 10.0,
+   'avg_logprob': 0.0,
+   'no_speech_prob': 1.0,
+   'words': [{'word': '', 'start': 0, 'end': 10.0}]}]
         data = []
         for segment in segments:
             words = segment['words']
@@ -337,6 +347,9 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
                 'words_len': len(words_list)
             })
         data = pd.DataFrame(data)
+        display(data)
+        print(i)
+        i+=1
         last_end = data.iloc[-1]['end']
         df = pd.concat([df, data])
     df['id'] = idx
