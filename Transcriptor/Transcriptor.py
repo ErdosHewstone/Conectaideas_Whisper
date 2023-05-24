@@ -378,7 +378,7 @@ def dataframe_to_xlsx(df, name):
 
     # Agregar validación de datos a la columna 'evaluacion'
     n_rows = len(df)
-    worksheet.data_validation('A2:A'+str(1+n_rows), {'validate': 'list', 'source': ['bueno', 'regular', 'malo']})
+    worksheet.data_validation('A2:A'+str(1+n_rows), {'validate': 'list', 'source': ['ideal','bueno', 'regular', 'malo']})
 
     # Guardar el archivo Excel
     writer.save()
