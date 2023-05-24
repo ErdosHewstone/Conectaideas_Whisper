@@ -369,25 +369,19 @@ def dataframe_to_xlsx(df, name):
     df = df.copy()
     df.insert(0, 'evaluacion', '')
     
-    # Guardar DataFrame en un archivo Excel
-    df.to_excel(f"{name}.xlsx", index=False)
+    # Escribir el DataFrame en un archivo Excel con un writer de xlsxwriter
+    writer = pd.ExcelWriter(f"{name}.xlsx", engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Sheet1', index=False)
     
-    # Cargar el libro de trabajo
-    wb = load_workbook(f"{name}.xlsx")
+    # Obtener el objeto de worksheet de xlsxwriter
+    worksheet = writer.sheets['Sheet1']
 
-    # Seleccionar la hoja de cálculo
-    ws = wb.active
+    # Agregar validación de datos a la columna 'evaluacion'
+    n_rows = len(df)
+    worksheet.data_validation('A2:A'+str(1+n_rows), {'validate': 'list', 'source': ['bueno', 'regular', 'malo']})
 
-    # Crear la validación de datos
-    dv = DataValidation(type="list", formula1='"bueno,regular,malo"', showDropDown=True)
-
-    # Agregar la validación de datos a la columna deseada (por ejemplo, la columna A que es ahora 'evaluacion')
-    ws.add_data_validation(dv)
-    for i in range(2, ws.max_row + 1):  # Comenzando desde la segunda fila porque la primera fila contiene encabezados
-        dv.add(ws[f'A{i}'])
-
-    # Guardar el libro de trabajo
-    wb.save(f"{name}.xlsx")
+    # Guardar el archivo Excel
+    writer.save()
 
     
 def run_model(modelo):
