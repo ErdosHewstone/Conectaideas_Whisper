@@ -278,7 +278,7 @@ def create_wav(video_path,audio_path):
     subprocess.call(command, shell=True) 
 
 # Transcripción de audio
-def transcribir(audio_path, model , supress_s = True, previous = False, tuples = (0.0,0.2,0.4,0.6,0.8,1.0)): #RECIBE UN AUDIO Y EL MODELO WHISPER PARA TRANSCRIPCION
+def transcribir(audio_path, model , supress_s = True, previous = False): #RECIBE UN AUDIO Y EL MODELO WHISPER PARA TRANSCRIPCION
     audio_features = process_audio(audio_path)
     print('audio procesado')
     clasificacion_2 = classify_audio_segments(audio_features,modelCND2) #clasificacion que corta
@@ -303,9 +303,19 @@ def transcribir(audio_path, model , supress_s = True, previous = False, tuples =
     for t1,t2, clasificacion in tqdm(temps):
         if clasificacion ==0:
             a = newAudio[t1:t2]
-            a.export("temp.wav", format="wav") 
-            result = model.transcribe("temp.wav", language="es", suppress_silence=supress_s, ts_num=16,condition_on_previous_text=previous)
+            a.export("temp.wav", format="wav")
+            try:
+                result = model.transcribe("temp.wav", language="es")
+            except Exception as e:
+                print(f"Se produjo un error durante la transcripción: {e}")
+                print(f"t1={t1}, t2= {t2}, clasificacion = {clasificacion})
+                print('Modelo', model)
+                print('Audio',newAudio[t1:t2))
+                print('archivo audio existe ',os.path.isfile('temp.wav'))
+                return None
+
             results.append(result.to_dict())
+
         else:
             result = transcripcion_vacia(t1/1000,t2/1000)
             results.append(result)
