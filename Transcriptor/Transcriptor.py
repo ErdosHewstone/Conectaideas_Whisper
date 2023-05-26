@@ -305,7 +305,7 @@ def transcribir(audio_path, model , supress_s = True, previous = False): #RECIBE
             a = newAudio[t1:t2]
             a.export("temp.wav", format="wav")
             try:
-                result = model.transcribe("temp.wav", language="es")
+                result = model.transcribe("temp.wav", language="es",supress_s,previous)
             except Exception as e:
                 print(f"Se produjo un error durante la transcripción: {e}")
                 print(f"t1={t1}, t2= {t2}, clasificacion = {clasificacion})
