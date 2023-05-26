@@ -312,7 +312,8 @@ def transcribir(audio_path, model , supress_s = True, previous = False): #RECIBE
                 print('Modelo', model)
                 print('Audio',newAudio[t1:t2))
                 print('archivo audio existe ',os.path.isfile('temp.wav'))
-                return None
+                print('volviendo a intentar...')
+                result = model.transcribe("temp.wav", language="es")
 
             results.append(result.to_dict())
 
