@@ -1,3 +1,4 @@
+import os
 import subprocess
 import stable_whisper
 import json
@@ -310,7 +311,7 @@ def transcribir(audio_path, model , supress_s = True, previous = False): #RECIBE
                 print(f"Se produjo un error durante la transcripción: {e}")
                 print(f"t1={t1}, t2= {t2}, clasificacion = {clasificacion}")
                 print('Modelo', model)
-                print('Audio',newAudio[t1:t2))
+                print('Audio',newAudio[t1:t2])
                 print('archivo audio existe ',os.path.isfile('temp.wav'))
                 print('volviendo a intentar...')
                 result = model.transcribe("temp.wav", language="es")
