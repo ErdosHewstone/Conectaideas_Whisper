@@ -331,16 +331,15 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
     clasificaciones = [(t1,t2,cl) for t1,t2, cl in resultado[3]]
     df = pd.DataFrame()
     last_end = 0
-    = 0
-for k, result in enumerate(results):
-    segments = result['segments']
-    if segments == []:
-        segments = [{'text': '',
-                     'start': 0,
-                     'end': clasificaciones[k][1] - clasificaciones[k][0],
-                     'avg_logprob': 0.0,
-                     'no_speech_prob': 1.0,
-                     'words': [{'word': '', 'start': 0, 'end': clasificaciones[k][1] - clasificaciones[k][0]}]}]
+    for k, result in enumerate(results):
+        segments = result['segments']
+        if segments == []:
+            segments = [{'text': '',
+                         'start': 0,
+                         'end': clasificaciones[k][1] - clasificaciones[k][0],
+                         'avg_logprob': 0.0,
+                         'no_speech_prob': 1.0,
+                         'words': [{'word': '', 'start': 0, 'end': clasificaciones[k][1] - clasificaciones[k][0]}]}]
 
         data = []
         for segment in segments:
