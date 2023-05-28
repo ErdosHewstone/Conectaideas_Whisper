@@ -337,10 +337,10 @@ def json_to_dataframe(resultado):#RECIBE LISTA DE TRANSCRIPCIONES, NOMBRE DE CLA
         if segments == []:
             segments = [{'text': '',
    'start': 0,
-   'end': clasificaciones[i][1]-clasificaciones[i][0],
+   'end': clasificaciones[k][1]-clasificaciones[k][0],
    'avg_logprob': 0.0,
    'no_speech_prob': 1.0,
-   'words': [{'word': '', 'start': 0, 'end': clasificaciones[i][1]-clasificaciones[i][0]}]}]
+   'words': [{'word': '', 'start': 0, 'end': clasificaciones[k][1]-clasificaciones[k][0]}]}]
         data = []
         for segment in segments:
             words = segment['words']
